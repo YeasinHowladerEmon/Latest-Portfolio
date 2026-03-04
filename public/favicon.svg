@@ -1,41 +1,4 @@
 <svg xmlns="http://www.svg.org/2000/svg" viewBox="0 0 100 100">
-  <defs>
-    <!-- Dark Background -->
-    <rect id="bg" width="100" height="100" rx="20" fill="#050505" />
-    
-    <!-- Neon Glow Filters -->
-    <filter id="neon-glow-green" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="4" result="blur" />
-      <feMerge>
-        <feMergeNode in="blur" />
-        <feMergeNode in="blur" />
-        <feMergeNode in="SourceGraphic" />
-      </feMerge>
-    </filter>
-    <filter id="neon-glow-purple" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="6" result="blur" />
-      <feMerge>
-        <feMergeNode in="blur" />
-        <feMergeNode in="blur" />
-        <feMergeNode in="SourceGraphic" />
-      </feMerge>
-    </filter>
-  </defs>
-
-  <use href="#bg" />
-  
-  <!-- Subtle Purple ambient glow behind -->
-  <circle cx="50" cy="50" r="25" fill="#a855f7" filter="url(#neon-glow-purple)" opacity="0.3"/>
-
-  <!-- The "E" Shape -->
-  <g transform="translate(30, 25)" filter="url(#neon-glow-green)">
-    <!-- Vertical Bar -->
-    <rect x="0" y="0" width="12" height="50" fill="#84cc16" rx="2" />
-    <!-- Top Horizontal -->
-    <rect x="0" y="0" width="35" height="12" fill="#84cc16" rx="2" />
-    <!-- Middle Horizontal -->
-    <rect x="0" y="19" width="25" height="12" fill="#84cc16" rx="2" />
-    <!-- Bottom Horizontal -->
-    <rect x="0" y="38" width="35" height="12" fill="#84cc16" rx="2" />
-  </g>
+  <rect width="100" height="100" rx="25" fill="#000000" />
+  <text x="50" y="72" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="72" font-weight="bold" fill="#84cc16" text-anchor="middle">E</text>
 </svg>
