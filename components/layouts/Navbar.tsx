@@ -1,14 +1,14 @@
 'use client'
 
 import { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Download } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
 
     const navItems = [
-        { name: 'Home', href: '#home' },
+        { name: 'Home', href: '/' },
         { name: 'About', href: '#about' },
         { name: 'Skills', href: '#skills' },
         { name: 'Projects', href: '#projects' },
@@ -25,7 +25,7 @@ export function Navbar() {
                         transition={{ duration: 0.5 }}
                         className="relative"
                     >
-                        <a href="#home" className="text-lime-400 font-black tracking-tighter uppercase relative group flex items-center gap-2">
+                        <a href="/" className="text-lime-400 font-black tracking-tighter uppercase relative group flex items-center gap-2">
                             <span className="relative z-10 flex items-center">
                                 <span className="text-4xl">E</span>
                                 <span className="text-fuchsia-500 text-3xl">M</span>
@@ -67,6 +67,23 @@ export function Navbar() {
                         ))}
                     </motion.div>
 
+                    {/* Download CV Button */}
+                    <motion.div
+                        className="hidden lg:block"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.5, delay: 0.3 }}
+                    >
+                        <a
+                            href="/resume.pdf"
+                            download
+                            className="flex items-center gap-2 px-6 py-2.5 bg-lime-400 hover:bg-lime-500 text-black font-black uppercase tracking-widest text-sm rounded-xl transition-all shadow-[0_0_20px_rgba(163,230,53,0.3)] hover:scale-105 active:scale-95"
+                        >
+                            <Download size={18} />
+                            Download CV
+                        </a>
+                    </motion.div>
+
                     {/* Mobile Menu Button */}
                     <motion.button
                         className="lg:hidden text-lime-400 hover:text-fuchsia-500"
@@ -102,6 +119,18 @@ export function Navbar() {
                                 {item.name}
                             </motion.a>
                         ))}
+                        <motion.a
+                            href="/resume.pdf"
+                            download
+                            className="flex items-center justify-center gap-2 w-full py-4 mt-4 bg-lime-400 text-black font-black uppercase tracking-widest rounded-xl"
+                            onClick={() => setIsOpen(false)}
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: 0.5 }}
+                        >
+                            <Download size={20} />
+                            Download CV
+                        </motion.a>
                     </motion.div>
                 )}
             </div>

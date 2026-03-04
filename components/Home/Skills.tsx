@@ -1,231 +1,227 @@
-'use client'
-import { motion } from 'motion/react';
+'use client';
+
+import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
 import { useInView } from 'motion/react';
-import { useRef } from 'react';
-import { Sparkles, Star } from 'lucide-react';
-// import { SkillVortex3D } from '@/components/3D/SkillVortex3D';
+import { useRef, useState, useEffect } from 'react';
+import { Sparkles, Cpu, Code2, Database, PenTool, Layout } from 'lucide-react';
+import { FloatingMatrix } from '../ui/Scene3D';
+const masteryToValue: Record<string, number> = {
+    'Beginner': 25,
+    'Intermediate': 50,
+    'Advanced': 75,
+    'Expert': 100
+};
 
-export function Skills() {
-    const ref = useRef(null);
-    const isInView = useInView(ref, { once: true, margin: "-100px" });
+const SkillCard = ({ skill, index }: { skill: any, index: number }) => {
+    const ref = useRef<HTMLDivElement>(null);
+    const [isHovered, setIsHovered] = useState(false);
 
-    const skillGroups = [
-        {
-            title: 'Frontend Mastery',
-            skills: [
-                { name: 'React', mastery: 'expert', color: 'lime' },
-                { name: 'Next.js', mastery: 'expert', color: 'lime' },
-                { name: 'TypeScript', mastery: 'advanced', color: 'fuchsia' },
-                { name: 'Tailwind CSS', mastery: 'expert', color: 'lime' },
-                { name: 'Motion/Framer', mastery: 'advanced', color: 'fuchsia' },
-            ],
-        },
-        {
-            title: 'Backend & Database',
-            skills: [
-                { name: 'Node.js', mastery: 'advanced', color: 'fuchsia' },
-                { name: 'Python', mastery: 'intermediate', color: 'cyan' },
-                { name: 'PostgreSQL', mastery: 'advanced', color: 'fuchsia' },
-                { name: 'MongoDB', mastery: 'intermediate', color: 'cyan' },
-            ],
-        },
-        {
-            title: 'Creative & Tools',
-            skills: [
-                { name: 'Three.js', mastery: 'intermediate', color: 'cyan' },
-                { name: 'Figma', mastery: 'advanced', color: 'fuchsia' },
-                { name: 'Git', mastery: 'expert', color: 'lime' },
-                { name: 'Docker', mastery: 'intermediate', color: 'cyan' },
-                { name: 'AWS', mastery: 'intermediate', color: 'cyan' },
-            ],
-        },
-    ];
+    const x = useMotionValue(0);
+    const y = useMotionValue(0);
 
-    const getMasteryStars = (mastery: string) => {
-        switch (mastery) {
-            case 'expert':
-                return 5;
-            case 'advanced':
-                return 4;
-            case 'intermediate':
-                return 3;
-            default:
-                return 2;
-        }
+    const mouseXSpring = useSpring(x, { stiffness: 300, damping: 30 });
+    const mouseYSpring = useSpring(y, { stiffness: 300, damping: 30 });
+
+    const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["15deg", "-15deg"]);
+    const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-15deg", "15deg"]);
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (!ref.current) return;
+        const rect = ref.current.getBoundingClientRect();
+        const width = rect.width;
+        const height = rect.height;
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        const xPct = mouseX / width - 0.5;
+        const yPct = mouseY / height - 0.5;
+        x.set(xPct);
+        y.set(yPct);
     };
 
-    const getMasteryLabel = (mastery: string) => {
-        switch (mastery) {
-            case 'expert':
-                return 'Expert';
-            case 'advanced':
-                return 'Advanced';
-            case 'intermediate':
-                return 'Intermediate';
-            default:
-                return 'Learning';
-        }
+    const handleMouseLeave = () => {
+        x.set(0);
+        y.set(0);
+        setIsHovered(false);
+    };
+
+    const getIcon = (name: string) => {
+        if (name.includes('React') || name.includes('Next') || name.includes('Vue')) return <Code2 size={24} />;
+        if (name.includes('Node') || name.includes('Python') || name.includes('Java')) return <Cpu size={24} />;
+        if (name.includes('SQL') || name.includes('Mongo') || name.includes('Data')) return <Database size={24} />;
+        if (name.includes('Figma') || name.includes('Adobe')) return <PenTool size={24} />;
+        return <Layout size={24} />;
     };
 
     return (
-        <section id="skills" className="py-20 bg-zinc-950 relative overflow-hidden" ref={ref}>
-            {/* Animated background grid */}
-            <div className="absolute inset-0 opacity-10">
+        <motion.div
+            ref={ref}
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+            onMouseMove={handleMouseMove}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={handleMouseLeave}
+            style={{
+                rotateY,
+                rotateX,
+                transformStyle: "preserve-3d",
+            }}
+            className="relative group h-full"
+        >
+            <div
+                className={`relative h-full bg-black/80 backdrop-blur-xl border border-white/10 p-6 rounded-xl overflow-hidden transition-colors duration-300 ${skill.color === 'lime' ? 'group-hover:border-lime-400/50' :
+                    skill.color === 'fuchsia' ? 'group-hover:border-fuchsia-500/50' :
+                        'group-hover:border-cyan-400/50'
+                    }`}
+                style={{ transform: "translateZ(20px)" }}
+            >
+                {/* Background Grid Pattern inside card */}
+                <div className="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-size-[14px_14px]" />
+
+                {/* Glowing Corner Accents */}
+                <div className={`absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 transition-colors duration-300 ${isHovered ? (skill.color === 'lime' ? 'border-lime-400' : skill.color === 'fuchsia' ? 'border-fuchsia-500' : 'border-cyan-400') : 'border-white/20'
+                    }`} />
+                <div className={`absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 transition-colors duration-300 ${isHovered ? (skill.color === 'lime' ? 'border-lime-400' : skill.color === 'fuchsia' ? 'border-fuchsia-500' : 'border-cyan-400') : 'border-white/20'
+                    }`} />
+
+                <div className="relative z-10 flex flex-col h-full" style={{ transform: "translateZ(30px)" }}>
+                    <div className="flex justify-between items-start mb-4">
+                        <div className={`p-3 rounded-lg ${skill.color === 'lime' ? 'bg-lime-400/10 text-lime-400' :
+                            skill.color === 'fuchsia' ? 'bg-fuchsia-500/10 text-fuchsia-500' :
+                                'bg-cyan-400/10 text-cyan-400'
+                            }`}>
+                            {getIcon(skill.name)}
+                        </div>
+                        <div className="text-xs font-mono text-gray-500 uppercase tracking-widest">
+                            {skill.mastery}
+                        </div>
+                    </div>
+
+                    <h4 className="text-xl font-bold text-white mb-2 tracking-wide group-hover:text-white transition-colors">
+                        {skill.name}
+                    </h4>
+
+                    <div className="mt-auto">
+                        <div className="flex justify-between items-center mb-1">
+                            <span className="text-xs font-mono text-zinc-500 uppercase tracking-wider">Proficiency</span>
+                            <span className="text-xs font-bold font-mono text-zinc-300 group-hover:text-white transition-colors">{masteryToValue[skill.mastery]}%</span>
+                        </div>
+                        <div className="h-1.5 w-full bg-gray-800 rounded-full overflow-hidden">
+                            <motion.div
+                                className={`h-full ${skill.color === 'lime' ? 'bg-lime-400 shadow-[0_0_10px_rgba(163,230,53,0.5)]' :
+                                    skill.color === 'fuchsia' ? 'bg-fuchsia-500 shadow-[0_0_10px_rgba(217,70,239,0.5)]' :
+                                        'bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.5)]'
+                                    }`}
+                                initial={{ width: 0 }}
+                                animate={{ width: isHovered ? `${masteryToValue[skill.mastery]}%` : `${masteryToValue[skill.mastery] - 15}%` }}
+                                transition={{ duration: 0.8, ease: "easeOut" }}
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Scanline Effect */}
                 <motion.div
-                    className="absolute inset-0 bg-[linear-gradient(to_right,#a3e635_1px,transparent_1px),linear-gradient(to_bottom,#a3e635_1px,transparent_1px)] bg-[size:3rem_3rem]"
+                    className={`absolute inset-0 bg-linear-to-b from-transparent ${skill.color === 'lime' ? 'via-lime-400/10' :
+                        skill.color === 'fuchsia' ? 'via-fuchsia-500/10' :
+                            'via-cyan-400/10'
+                        } to-transparent opacity-0 group-hover:opacity-100 pointer-events-none`}
                     animate={{
-                        backgroundPosition: ['0px 0px', '48px 48px'],
+                        y: ['-100%', '100%'],
                     }}
                     transition={{
-                        duration: 20,
+                        duration: 2,
                         repeat: Infinity,
                         ease: "linear",
                     }}
                 />
             </div>
+        </motion.div>
+    );
+};
 
-            <div className="max-w-360 mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+export function Skills() {
+    const ref = useRef(null);
+    const isInView = useInView(ref, { once: true, margin: "-100px" });
+    const [skills, setSkills] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    const fetchSkills = async () => {
+        try {
+            const res = await fetch('/api/skills');
+            const data = await res.json();
+            if (res.ok) {
+                setSkills(data);
+            }
+        } catch (error) {
+            console.error('Error fetching skills:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchSkills();
+    }, []);
+
+    // Group skills by category
+    const skillGroups = skills.reduce((acc: any[], skill: any) => {
+        const category = skill.category || 'Other';
+        const group = acc.find(g => g.title === category);
+        if (group) {
+            group.skills.push(skill);
+        } else {
+            acc.push({ title: category, skills: [skill] });
+        }
+        return acc;
+    }, []);
+
+    return (
+        <section id="skills" className="py-24 bg-zinc-950 relative overflow-hidden" ref={ref}>
+            {/* 3D Grid Background */}
+            <FloatingMatrix />
+
+            <div className="max-w-360 mx-auto px-4 sm:px-6 lg:px-8">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                     transition={{ duration: 0.6 }}
-                    className="mb-16"
+                    className="mb-20 text-center"
                 >
-                    <div className="flex items-center gap-4 mb-6">
-                        <Sparkles className="text-lime-400" size={32} />
-                        <h2 className="text-fuchsia-500 uppercase tracking-widest">My Arsenal</h2>
+                    <div className="inline-flex items-center gap-2 px-4 py-2 border border-lime-400/30 rounded-full bg-lime-400/5 mb-6">
+                        <Sparkles className="text-lime-400" size={16} />
+                        <span className="text-lime-400 text-sm uppercase tracking-widest font-medium">Technical Arsenal</span>
                     </div>
-                    <h3 className="text-white max-w-3xl">
-                        Technologies I wield to build exceptional digital products
-                    </h3>
+                    <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight">
+                        FORGED IN <span className="text-transparent bg-clip-text bg-linear-to-r from-lime-400 to-fuchsia-500">CODE</span>
+                    </h2>
+                    <p className="text-gray-400 max-w-2xl mx-auto text-lg">
+                        A comprehensive suite of technologies I use to build scalable, high-performance applications.
+                    </p>
                 </motion.div>
 
-                {/* 3D Skills Visualization removed */}
-                {/* <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.8, delay: 0.2 }}
-                    className="mb-16"
-                >
-                    <SkillVortex3D />
-                </motion.div> */}
-
-                <div className="space-y-12">
+                <div className="space-y-20">
                     {skillGroups.map((group, groupIndex) => (
-                        <motion.div
-                            key={group.title}
-                            initial={{ opacity: 0, y: 30 }}
-                            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-                            transition={{ duration: 0.6, delay: groupIndex * 0.2 }}
-                        >
-                            {/* Group Title */}
-                            <div className="mb-6">
-                                <h4 className="text-white mb-2">{group.title}</h4>
-                                <div className="w-24 h-0.5 bg-gradient-to-r from-lime-400 to-fuchsia-500" />
-                            </div>
+                        <div key={group.title} className="relative">
+                            <motion.div
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+                                transition={{ duration: 0.5, delay: groupIndex * 0.2 }}
+                                className="flex items-center gap-4 mb-8"
+                            >
+                                <h3 className="text-2xl font-bold text-white uppercase tracking-wider">{group.title}</h3>
+                                <div className="h-px flex-1 bg-linear-to-r from-white/20 to-transparent" />
+                            </motion.div>
 
-                            {/* Skills Grid */}
-                            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {group.skills.map((skill, skillIndex) => (
-                                    <motion.div
-                                        key={skill.name}
-                                        initial={{ opacity: 0, scale: 0.9 }}
-                                        animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
-                                        transition={{ duration: 0.4, delay: groupIndex * 0.2 + skillIndex * 0.05 }}
-                                        whileHover={{ scale: 1.05, y: -5 }}
-                                        className="group relative bg-black border-2 border-white/10 p-6 hover:border-lime-400 transition-all duration-300"
-                                    >
-                                        {/* Corner decorations */}
-                                        <div className={`absolute top-0 right-0 w-3 h-3 ${skill.color === 'lime' ? 'bg-lime-400' : skill.color === 'fuchsia' ? 'bg-fuchsia-500' : 'bg-cyan-400'
-                                            }`} />
-                                        <div className={`absolute bottom-0 left-0 w-3 h-3 ${skill.color === 'lime' ? 'bg-lime-400' : skill.color === 'fuchsia' ? 'bg-fuchsia-500' : 'bg-cyan-400'
-                                            }`} />
-
-                                        <div className="relative z-10">
-                                            {/* Skill Name */}
-                                            <h5 className="text-white mb-3 uppercase tracking-wide">
-                                                {skill.name}
-                                            </h5>
-
-                                            {/* Mastery Level with Stars */}
-                                            <div className="flex items-center justify-between mb-2">
-                                                <span className={`text-xs uppercase tracking-widest ${skill.color === 'lime' ? 'text-lime-400' : skill.color === 'fuchsia' ? 'text-fuchsia-500' : 'text-cyan-400'
-                                                    }`}>
-                                                    {getMasteryLabel(skill.mastery)}
-                                                </span>
-                                                <div className="flex gap-1">
-                                                    {[...Array(5)].map((_, i) => (
-                                                        <Star
-                                                            key={i}
-                                                            size={14}
-                                                            className={`${i < getMasteryStars(skill.mastery)
-                                                                ? skill.color === 'lime'
-                                                                    ? 'text-lime-400 fill-lime-400'
-                                                                    : skill.color === 'fuchsia'
-                                                                        ? 'text-fuchsia-500 fill-fuchsia-500'
-                                                                        : 'text-cyan-400 fill-cyan-400'
-                                                                : 'text-white/10'
-                                                                }`}
-                                                        />
-                                                    ))}
-                                                </div>
-                                            </div>
-
-                                            {/* Mastery indicator line */}
-                                            <div className="h-1 bg-white/5 relative overflow-hidden">
-                                                <motion.div
-                                                    className={`absolute inset-y-0 left-0 ${skill.color === 'lime'
-                                                        ? 'bg-gradient-to-r from-lime-400 to-lime-500'
-                                                        : skill.color === 'fuchsia'
-                                                            ? 'bg-gradient-to-r from-fuchsia-500 to-fuchsia-600'
-                                                            : 'bg-gradient-to-r from-cyan-400 to-cyan-500'
-                                                        }`}
-                                                    initial={{ width: 0 }}
-                                                    animate={
-                                                        isInView
-                                                            ? {
-                                                                width: `${(getMasteryStars(skill.mastery) / 5) * 100}%`,
-                                                            }
-                                                            : { width: 0 }
-                                                    }
-                                                    transition={{
-                                                        duration: 1,
-                                                        delay: groupIndex * 0.2 + skillIndex * 0.05 + 0.3,
-                                                        ease: "easeOut",
-                                                    }}
-                                                />
-                                            </div>
-                                        </div>
-                                    </motion.div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 perspective-[1000px]">
+                                {group.skills.map((skill: any, skillIndex: number) => (
+                                    <SkillCard key={skill.name} skill={skill} index={skillIndex + (groupIndex * 5)} />
                                 ))}
                             </div>
-                        </motion.div>
+                        </div>
                     ))}
                 </div>
-
-                {/* Bottom accent */}
-                <motion.div
-                    className="mt-16 flex justify-center gap-8 flex-wrap"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                    transition={{ duration: 0.6, delay: 0.8 }}
-                >
-                    <div className="text-center">
-                        <div className="text-3xl text-lime-400 mb-2">15+</div>
-                        <div className="text-gray-400 uppercase text-xs tracking-wider">Technologies</div>
-                    </div>
-                    <div className="w-px bg-white/10" />
-                    <div className="text-center">
-                        <div className="text-3xl text-fuchsia-500 mb-2">5+</div>
-                        <div className="text-gray-400 uppercase text-xs tracking-wider">Years Experience</div>
-                    </div>
-                    <div className="w-px bg-white/10" />
-                    <div className="text-center">
-                        <div className="text-3xl text-cyan-400 mb-2">∞</div>
-                        <div className="text-gray-400 uppercase text-xs tracking-wider">Learning</div>
-                    </div>
-                </motion.div>
-            </div >
-        </section >
+            </div>
+        </section>
     );
 }
