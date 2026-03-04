@@ -316,6 +316,8 @@ export function Hero() {
                 <motion.a
                   key={social.label}
                   href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-12 h-12 border-2 border-gray-700 text-gray-400 hover:border-lime-400 hover:text-lime-400 flex items-center justify-center transition-colors duration-300"
                   whileHover={{ scale: 1.1, rotate: 5 }}
                   whileTap={{ scale: 0.95 }}

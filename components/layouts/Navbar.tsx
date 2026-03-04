@@ -75,8 +75,10 @@ export function Navbar() {
                         transition={{ duration: 0.5, delay: 0.3 }}
                     >
                         <a
-                            href="/resume.pdf"
+                            href="/resume/Yeasin_Emon_FullStack_Developer_Resume.pdf"
                             download
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="flex items-center gap-2 px-6 py-2.5 bg-lime-400 hover:bg-lime-500 text-black font-black uppercase tracking-widest text-sm rounded-xl transition-all shadow-[0_0_20px_rgba(163,230,53,0.3)] hover:scale-105 active:scale-95"
                         >
                             <Download size={18} />
@@ -120,8 +122,10 @@ export function Navbar() {
                             </motion.a>
                         ))}
                         <motion.a
-                            href="/resume.pdf"
+                            href="/resume/Yeasin_Emon_FullStack_Developer_Resume.pdf"
                             download
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="flex items-center justify-center gap-2 w-full py-4 mt-4 bg-lime-400 text-black font-black uppercase tracking-widest rounded-xl"
                             onClick={() => setIsOpen(false)}
                             initial={{ opacity: 0, scale: 0.9 }}
