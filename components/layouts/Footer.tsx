@@ -137,7 +137,7 @@ export function Footer() {
                 {/* Footer Bottom Bar */}
                 <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
                     <div className="flex flex-col md:flex-row items-center gap-2 md:gap-6">
-                        <span className="text-zinc-600 text-[10px] font-mono tracking-widest uppercase">
+                        <span suppressHydrationWarning className="text-zinc-600 text-[10px] font-mono tracking-widest uppercase">
                             &copy; {new Date().getFullYear()} Yeasin Howlader Emon
                         </span>
                         <div className="hidden md:block w-1.5 h-1.5 rounded-full bg-zinc-800" />

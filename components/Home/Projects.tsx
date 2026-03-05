@@ -151,17 +151,19 @@ const ProjectCard = ({ project, index }: { project: any, index: number }) => {
                             <ExternalLink size={18} />
                             <span>View Project</span>
                         </motion.a>
-                        <motion.a
-                            href={project.github || "#"}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="flex items-center gap-2 px-6 py-3 rounded-full font-bold text-white border border-white/20 hover:bg-white/10 transition-all"
-                        >
-                            <Github size={18} />
-                            <span>Source Code</span>
-                        </motion.a>
+                        {project.github ? (
+                            <motion.a
+                                href={project.github}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="flex items-center gap-2 px-6 py-3 rounded-full font-bold text-white border border-white/20 hover:bg-white/10 transition-all"
+                            >
+                                <Github size={18} />
+                                <span>Source Code</span>
+                            </motion.a>
+                        ) : null}
                     </div>
                 </div>
             </div>
