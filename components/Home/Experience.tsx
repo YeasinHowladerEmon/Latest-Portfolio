@@ -1,13 +1,15 @@
 'use client';
 
 import { useRef, useState, useEffect, JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal } from 'react';
-import { motion, useInView } from 'motion/react';
 import { Briefcase, Calendar, TerminalSquare, ChevronRight, CheckCircle2 } from 'lucide-react';
 import { FloatingMatrix } from '../ui/Scene3D';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 export function Experience() {
-    const ref = useRef(null);
-    const isInView = useInView(ref, { once: true, margin: "-100px" });
+    const sectionRef = useRef<HTMLElement>(null);
     const [experiences, setExperiences] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -29,17 +31,34 @@ export function Experience() {
         fetchExperiences();
     }, []);
 
+    // Animate after data loads
+    useEffect(() => {
+        if (loading || experiences.length === 0) return;
+        const ctx = gsap.context(() => {
+            gsap.fromTo('.exp-heading',
+                { opacity: 0, y: 40 },
+                {
+                    opacity: 1, y: 0, duration: 0.9, ease: 'power3.out',
+                    scrollTrigger: { trigger: sectionRef.current, start: 'top 80%', once: true },
+                }
+            );
+            gsap.fromTo('.exp-item',
+                { opacity: 0, x: -60 },
+                {
+                    opacity: 1, x: 0, duration: 0.7, stagger: 0.2, ease: 'power3.out',
+                    scrollTrigger: { trigger: sectionRef.current, start: 'top 70%', once: true },
+                }
+            );
+        }, sectionRef);
+        return () => ctx.revert();
+    }, [loading, experiences]);
+
     return (
-        <section id="experience" className="py-24 bg-[#030213] relative overflow-hidden" ref={ref}>
+        <section id="experience" className="py-24 bg-[#030213] relative overflow-hidden" ref={sectionRef}>
             <FloatingMatrix />
 
             <div className="max-w-360 mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                    transition={{ duration: 0.6 }}
-                    className="mb-20 text-center md:text-left"
-                >
+                <div className="exp-heading mb-20 text-center md:text-left" style={{ opacity: 0 }}>
                     <div className="inline-flex items-center gap-2 px-4 py-2 border border-fuchsia-500/30 rounded-full bg-fuchsia-500/5 mb-6">
                         <Briefcase className="text-fuchsia-400" size={16} />
                         <span className="text-fuchsia-400 text-sm uppercase tracking-widest font-medium">Career Log</span>
@@ -53,7 +72,7 @@ export function Experience() {
                             A chronological log of my operational history, deployments, and objective executions across the industry.
                         </p>
                     </div>
-                </motion.div>
+                </div>
 
                 <div className="relative">
                     {/* Main Timeline Line */}
@@ -61,12 +80,10 @@ export function Experience() {
 
                     <div className="space-y-12">
                         {experiences.map((exp, index) => (
-                            <motion.div
+                            <div
                                 key={exp._id || index}
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
-                                transition={{ duration: 0.5, delay: index * 0.2 }}
-                                className="relative pl-8 md:pl-24 group"
+                                className="exp-item relative pl-8 md:pl-24 group"
+                                style={{ opacity: 0 }}
                             >
                                 {/* Timeline Node */}
                                 <div className="absolute left-[-4px] md:left-[28px] top-6 w-2.5 h-2.5 rounded-full bg-white/20 border-2 border-[#030213] group-hover:bg-white group-hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all z-10" />
@@ -110,7 +127,7 @@ export function Experience() {
                                         ))}
                                     </ul>
                                 </div>
-                            </motion.div>
+                            </div>
                         ))}
                     </div>
                 </div>

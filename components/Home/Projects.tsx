@@ -1,11 +1,13 @@
 'use client';
 
-import { motion, useScroll, useTransform, useMotionValue, useSpring } from 'motion/react';
-import { useInView } from 'motion/react';
+import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
 import { useRef, useState, useEffect } from 'react';
 import { ExternalLink, Github, ArrowRight, Layers, Sparkles } from 'lucide-react';
 import { InfiniteGrid } from '../ui/Scene3D';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
+gsap.registerPlugin(ScrollTrigger);
 
 const ProjectCard = ({ project, index }: { project: any, index: number }) => {
     const ref = useRef<HTMLDivElement>(null);
@@ -42,19 +44,15 @@ const ProjectCard = ({ project, index }: { project: any, index: number }) => {
     return (
         <motion.div
             ref={ref}
-            initial={{ opacity: 0, y: 100 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8, delay: index * 0.2 }}
+            className="relative group w-full mb-24 last:mb-0 perspective-[1000px]"
             onMouseMove={handleMouseMove}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={handleMouseLeave}
             style={{
                 rotateX,
                 rotateY,
-                transformStyle: "preserve-3d",
+                transformStyle: 'preserve-3d',
             }}
-            className="relative group w-full mb-24 last:mb-0 perspective-[1000px]"
         >
             <div className="relative grid lg:grid-cols-2 gap-8 items-center bg-zinc-900/50 backdrop-blur-sm border border-white/5 rounded-3xl p-6 lg:p-8 overflow-hidden">
                 {/* Neon Glow Background */}
@@ -172,17 +170,9 @@ const ProjectCard = ({ project, index }: { project: any, index: number }) => {
 };
 
 export function Projects() {
-    const ref = useRef(null);
+    const sectionRef = useRef<HTMLElement>(null);
     const [projects, setProjects] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-
-    const { scrollYProgress } = useScroll({
-        target: ref,
-        offset: ["start end", "end start"]
-    });
-
-    const opacity = useTransform(scrollYProgress, [0, 0.2], [0, 1]);
-    const scale = useTransform(scrollYProgress, [0, 0.2], [0.8, 1]);
 
     const fetchProjects = async () => {
         try {
@@ -202,8 +192,30 @@ export function Projects() {
         fetchProjects();
     }, []);
 
+    // Animate cards after data is loaded
+    useEffect(() => {
+        if (loading || projects.length === 0) return;
+        const ctx = gsap.context(() => {
+            gsap.fromTo('.proj-heading',
+                { opacity: 0, y: 50 },
+                {
+                    opacity: 1, y: 0, duration: 1, ease: 'power3.out',
+                    scrollTrigger: { trigger: sectionRef.current, start: 'top 80%', once: true },
+                }
+            );
+            gsap.fromTo('.proj-card',
+                { opacity: 0, y: 80, scale: 0.95 },
+                {
+                    opacity: 1, y: 0, scale: 1, duration: 0.9, stagger: 0.25, ease: 'power3.out',
+                    scrollTrigger: { trigger: '.proj-card-list', start: 'top 80%', once: true },
+                }
+            );
+        }, sectionRef);
+        return () => ctx.revert();
+    }, [loading, projects]);
+
     return (
-        <section id="projects" className="py-32 bg-black relative overflow-hidden" ref={ref}>
+        <section id="projects" className="py-32 bg-black relative overflow-hidden" ref={sectionRef}>
             {/* 3D Infinite Grid Background */}
             <InfiniteGrid />
 
@@ -212,20 +224,12 @@ export function Projects() {
             <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-lime-400/50 to-transparent" />
             <div className="absolute bottom-0 inset-x-0 h-px bg-linear-to-r from-transparent via-fuchsia-500/50 to-transparent" />
 
-            <motion.div
-                style={{ opacity, scale }}
-                className="max-w-360 mx-auto px-4 sm:px-6 lg:px-8"
-            >
-                <div className="text-center mb-24">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="inline-flex items-center gap-2 px-4 py-2 border border-fuchsia-500/30 rounded-full bg-fuchsia-500/5 mb-6"
-                    >
+            <div className="max-w-360 mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="proj-heading text-center mb-24" style={{ opacity: 0 }}>
+                    <div className="inline-flex items-center gap-2 px-4 py-2 border border-fuchsia-500/30 rounded-full bg-fuchsia-500/5 mb-6">
                         <Layers className="text-fuchsia-500" size={16} />
                         <span className="text-fuchsia-500 text-sm uppercase tracking-widest font-medium">Selected Works</span>
-                    </motion.div>
+                    </div>
 
                     <h2 className="text-5xl md:text-7xl font-black text-white mb-6 tracking-tight">
                         DIGITAL <span className="text-transparent bg-clip-text bg-linear-to-r from-fuchsia-500 to-purple-600">REALITY</span>
@@ -235,12 +239,14 @@ export function Projects() {
                     </p>
                 </div>
 
-                <div className="relative">
+                <div className="proj-card-list relative">
                     {/* Vertical connection line */}
                     <div className="absolute left-0 lg:left-1/2 top-0 bottom-0 w-px bg-linear-to-b from-transparent via-white/10 to-transparent hidden lg:block" />
 
                     {projects.map((project: any, index: number) => (
-                        <ProjectCard key={project.title} project={project} index={index} />
+                        <div key={project.title} className="proj-card" style={{ opacity: 0 }}>
+                            <ProjectCard project={project} index={index} />
+                        </div>
                     ))}
                 </div>
 
@@ -255,7 +261,7 @@ export function Projects() {
                         <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                     </motion.a>
                 </div>
-            </motion.div>
+            </div>
         </section>
     );
 }

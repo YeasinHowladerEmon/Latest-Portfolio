@@ -1,10 +1,13 @@
 'use client';
 
 import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
-import { useInView } from 'motion/react';
 import { useRef, useState, useEffect } from 'react';
 import { Sparkles, Cpu, Code2, Database, PenTool, Layout } from 'lucide-react';
 import { FloatingMatrix } from '../ui/Scene3D';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 const masteryToValue: Record<string, number> = {
     'Beginner': 25,
     'Intermediate': 50,
@@ -55,16 +58,13 @@ const SkillCard = ({ skill, index }: { skill: any, index: number }) => {
     return (
         <motion.div
             ref={ref}
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
             onMouseMove={handleMouseMove}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={handleMouseLeave}
             style={{
                 rotateY,
                 rotateX,
-                transformStyle: "preserve-3d",
+                transformStyle: 'preserve-3d',
             }}
             className="relative group h-full"
         >
@@ -141,8 +141,7 @@ const SkillCard = ({ skill, index }: { skill: any, index: number }) => {
 };
 
 export function Skills() {
-    const ref = useRef(null);
-    const isInView = useInView(ref, { once: true, margin: "-100px" });
+    const sectionRef = useRef<HTMLElement>(null);
     const [skills, setSkills] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -164,6 +163,34 @@ export function Skills() {
         fetchSkills();
     }, []);
 
+    useEffect(() => {
+        if (loading || skills.length === 0) return;
+        const ctx = gsap.context(() => {
+            gsap.fromTo('.skills-heading',
+                { opacity: 0, y: 40 },
+                {
+                    opacity: 1, y: 0, duration: 0.9, ease: 'power3.out',
+                    scrollTrigger: { trigger: sectionRef.current, start: 'top 80%', once: true },
+                }
+            );
+            gsap.fromTo('.skills-group-title',
+                { opacity: 0, x: -30 },
+                {
+                    opacity: 1, x: 0, duration: 0.7, stagger: 0.2, ease: 'power3.out',
+                    scrollTrigger: { trigger: sectionRef.current, start: 'top 70%', once: true },
+                }
+            );
+            gsap.fromTo('.skills-card',
+                { opacity: 0, scale: 0.85, y: 30 },
+                {
+                    opacity: 1, scale: 1, y: 0, duration: 0.6, stagger: 0.07, ease: 'back.out(1.4)',
+                    scrollTrigger: { trigger: '.skills-grid', start: 'top 85%', once: true },
+                }
+            );
+        }, sectionRef);
+        return () => ctx.revert();
+    }, [loading, skills]);
+
     // Group skills by category
     const skillGroups = skills.reduce((acc: any[], skill: any) => {
         const category = skill.category || 'Other';
@@ -177,17 +204,12 @@ export function Skills() {
     }, []);
 
     return (
-        <section id="skills" className="py-24 bg-zinc-950 relative overflow-hidden" ref={ref}>
+        <section id="skills" className="py-24 bg-zinc-950 relative overflow-hidden" ref={sectionRef}>
             {/* 3D Grid Background */}
             <FloatingMatrix />
 
             <div className="max-w-360 mx-auto px-4 sm:px-6 lg:px-8">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                    transition={{ duration: 0.6 }}
-                    className="mb-20 text-center"
-                >
+                <div className="skills-heading mb-20 text-center" style={{ opacity: 0 }}>
                     <div className="inline-flex items-center gap-2 px-4 py-2 border border-lime-400/30 rounded-full bg-lime-400/5 mb-6">
                         <Sparkles className="text-lime-400" size={16} />
                         <span className="text-lime-400 text-sm uppercase tracking-widest font-medium">Technical Arsenal</span>
@@ -198,24 +220,21 @@ export function Skills() {
                     <p className="text-gray-400 max-w-2xl mx-auto text-lg">
                         A comprehensive suite of technologies I use to build scalable, high-performance applications.
                     </p>
-                </motion.div>
+                </div>
 
-                <div className="space-y-20">
+                <div className="skills-grid space-y-20">
                     {skillGroups.map((group, groupIndex) => (
                         <div key={group.title} className="relative">
-                            <motion.div
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
-                                transition={{ duration: 0.5, delay: groupIndex * 0.2 }}
-                                className="flex items-center gap-4 mb-8"
-                            >
+                            <div className="skills-group-title flex items-center gap-4 mb-8" style={{ opacity: 0 }}>
                                 <h3 className="text-2xl font-bold text-white uppercase tracking-wider">{group.title}</h3>
                                 <div className="h-px flex-1 bg-linear-to-r from-white/20 to-transparent" />
-                            </motion.div>
+                            </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 perspective-[1000px]">
                                 {group.skills.map((skill: any, skillIndex: number) => (
-                                    <SkillCard key={skill.name} skill={skill} index={skillIndex + (groupIndex * 5)} />
+                                    <div key={skill.name} className="skills-card" style={{ opacity: 0 }}>
+                                        <SkillCard skill={skill} index={skillIndex + (groupIndex * 5)} />
+                                    </div>
                                 ))}
                             </div>
                         </div>

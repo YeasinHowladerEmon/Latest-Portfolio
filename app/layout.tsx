@@ -67,6 +67,7 @@ export const metadata: Metadata = {
 };
 
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
 
 export default function RootLayout({
   children,
@@ -76,8 +77,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${outfit.variable} ${jetbrainsMono.variable}`}>
       <body>
-        <LoadingScreen />
-        {children}
+        <SmoothScrollProvider>
+          <LoadingScreen />
+          {children}
+        </SmoothScrollProvider>
       </body>
     </html>
   );

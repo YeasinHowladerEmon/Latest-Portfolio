@@ -1,209 +1,258 @@
 'use client';
 
-import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
-import { useInView } from 'motion/react';
-import { useRef, useState } from 'react';
-import { Code, Database, Server, Cpu, Globe, Lock } from 'lucide-react';
-import { ImageWithFallback } from './ImageWithFallback';
-import { CyberSphere } from '../ui/Scene3D';
+import { motion } from 'motion/react';
+import { useRef, useEffect } from 'react';
+import { Trophy, BookOpen, Plane, Cpu, MapPin, Calendar, Rocket, Sparkles, Gamepad2, Heart } from 'lucide-react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
+gsap.registerPlugin(ScrollTrigger);
 
-const FeatureCard = ({ icon: Icon, title, description, delay }: any) => {
+const InterestCard = ({ icon: Icon, title, description, colorClass }: any) => {
+  const colorMap: Record<string, any> = {
+    lime: {
+      border: 'hover:border-lime-400/30',
+      bgBlur: 'bg-lime-400/5',
+      bgHover: 'group-hover:bg-lime-400/10',
+      iconBorder: 'group-hover:border-lime-400',
+      iconText: 'group-hover:text-lime-400'
+    },
+    fuchsia: {
+      border: 'hover:border-fuchsia-400/30',
+      bgBlur: 'bg-fuchsia-400/5',
+      bgHover: 'group-hover:bg-fuchsia-400/10',
+      iconBorder: 'group-hover:border-fuchsia-400',
+      iconText: 'group-hover:text-fuchsia-400'
+    },
+    blue: {
+      border: 'hover:border-blue-400/30',
+      bgBlur: 'bg-blue-400/5',
+      bgHover: 'group-hover:bg-blue-400/10',
+      iconBorder: 'group-hover:border-blue-400',
+      iconText: 'group-hover:text-blue-400'
+    },
+    orange: {
+      border: 'hover:border-orange-400/30',
+      bgBlur: 'bg-orange-400/5',
+      bgHover: 'group-hover:bg-orange-400/10',
+      iconBorder: 'group-hover:border-orange-400',
+      iconText: 'group-hover:text-orange-400'
+    }
+  };
+
+  const colors = colorMap[colorClass] || colorMap.lime;
+
   return (
     <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay }}
-      className="group flex gap-6 p-4 rounded-xl border border-transparent hover:border-lime-400/30 hover:bg-lime-400/5 transition-all duration-300"
+      whileHover={{ y: -5, scale: 1.02 }}
+      className={`group relative p-6 rounded-2xl bg-zinc-900/50 border border-white/5 backdrop-blur-sm overflow-hidden transition-all duration-300 ${colors.border} shadow-2xl`}
     >
-      <div className="flex-shrink-0 relative">
-        <div className="absolute inset-0 bg-lime-400/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-        <div className="relative w-14 h-14 bg-zinc-900 border border-white/10 rounded-xl flex items-center justify-center group-hover:border-lime-400 group-hover:scale-110 transition-all duration-300">
-          <Icon className="text-gray-400 group-hover:text-lime-400 transition-colors" size={24} />
+      <div className={`absolute top-0 right-0 w-24 h-24 ${colors.bgBlur} blur-3xl rounded-full -mr-12 -mt-12 ${colors.bgHover} transition-colors`} />
+
+      <div className="flex flex-col gap-4 relative z-10">
+        <div className={`w-12 h-12 rounded-xl bg-zinc-800 border border-white/5 flex items-center justify-center ${colors.iconBorder} group-hover:scale-110 transition-all duration-300`}>
+          <Icon className={`text-zinc-400 ${colors.iconText} transition-colors`} size={24} />
         </div>
-      </div>
-      <div>
-        <h4 className="text-lg font-bold text-white mb-2 font-mono group-hover:text-lime-400 transition-colors">{title}</h4>
-        <p className="text-gray-400 text-sm leading-relaxed">{description}</p>
+        <div>
+          <h4 className="text-lg font-bold text-white mb-2 tracking-tight group-hover:text-white/90">{title}</h4>
+          <p className="text-zinc-400 text-sm leading-relaxed group-hover:text-zinc-300">{description}</p>
+        </div>
       </div>
     </motion.div>
   );
 };
 
 export function About() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const sectionRef = useRef<HTMLElement>(null);
 
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const mouseXSpring = useSpring(x, { stiffness: 300, damping: 30 });
-  const mouseYSpring = useSpring(y, { stiffness: 300, damping: 30 });
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["10deg", "-10deg"]);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-10deg", "10deg"]);
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Main Heading
+      gsap.fromTo('.about-title',
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1, y: 0, duration: 1, ease: 'power3.out',
+          scrollTrigger: { trigger: sectionRef.current, start: 'top 80%', once: true }
+        }
+      );
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-    const xPct = mouseX / width - 0.5;
-    const yPct = mouseY / height - 0.5;
-    x.set(xPct);
-    y.set(yPct);
-  };
+      // Left Image
+      gsap.fromTo('.about-image-card',
+        { opacity: 0, scale: 0.9, x: -50 },
+        {
+          opacity: 1, scale: 1, x: 0, duration: 1.2, ease: 'power3.out',
+          scrollTrigger: { trigger: sectionRef.current, start: 'top 70%', once: true }
+        }
+      );
 
-  const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
-  };
-  const highlights = [
+      // Intro Paragraphs
+      gsap.fromTo('.about-intro-text',
+        { opacity: 0, x: 30 },
+        {
+          opacity: 1, x: 0, duration: 0.8, stagger: 0.2, ease: 'power3.out',
+          scrollTrigger: { trigger: '.about-intro-text', start: 'top 85%', once: true }
+        }
+      );
+
+      // Interest Cards
+      gsap.fromTo('.interest-card-item',
+        { opacity: 0, y: 40, scale: 0.95 },
+        {
+          opacity: 1, y: 0, scale: 1, duration: 0.7, stagger: 0.15, ease: 'back.out(1.2)',
+          scrollTrigger: { trigger: '.interests-grid', start: 'top 85%', once: true }
+        }
+      );
+
+      // Stats/Pillars
+      gsap.fromTo('.about-pillar',
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1, y: 0, duration: 0.6, stagger: 0.1, ease: 'power2.out',
+          scrollTrigger: { trigger: '.about-pillars', start: 'top 90%', once: true }
+        }
+      );
+    }, sectionRef);
+    return () => ctx.revert();
+  }, []);
+
+  const interests = [
     {
-      icon: Code,
-      title: 'Frontend Architecture',
-      description: 'Crafting responsive, high-performance UIs with React, Next.js, and modern CSS.',
+      icon: Trophy,
+      title: 'Footballer',
+      description: 'Competitive spirit forged on the pitch. I thrive in team environments and high-pressure situations.',
+      colorClass: 'lime'
     },
     {
-      icon: Server,
-      title: 'Backend Systems',
-      description: 'Building scalable microservices and RESTful APIs with Node.js and Python.',
+      icon: BookOpen,
+      title: 'Islamic Researcher',
+      description: 'Dedicated to studying Quran and Hadith, finding balance and deep wisdom for daily life and ethics.',
+      colorClass: 'fuchsia'
     },
     {
-      icon: Database,
-      title: 'Data Engineering',
-      description: 'Designing efficient database schemas with PostgreSQL, MongoDB, and Redis.',
+      icon: Plane,
+      title: 'Global Traveler',
+      description: 'Exploring diverse cultures and landscapes—broadening perspectives and finding inspiration across the world.',
+      colorClass: 'blue'
     },
     {
-      icon: Lock,
-      title: 'Security First',
-      description: 'Implementing robust authentication and authorization protocols.',
-    },
+      icon: Gamepad2,
+      title: 'Strategic Gamer',
+      description: 'Analyzing systems and mechanics in virtual worlds. Gaming helps me sharpen my problem-solving reflexes.',
+      colorClass: 'orange'
+    }
   ];
 
   return (
-    <section id="about" className="py-24 bg-zinc-950 relative overflow-hidden" ref={ref}>
-      {/* 3D Background */}
-      <CyberSphere />
+    <section id="about" className="py-24 bg-zinc-950 relative overflow-hidden" ref={sectionRef}>
+      {/* Background Ambience */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-lime-400/5 blur-[120px] rounded-full -mr-64 -mt-64" />
+      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-fuchsia-500/5 blur-[120px] rounded-full -ml-64 -mb-64" />
 
-      {/* Circuit Background Pattern */}
-      <div className="absolute inset-0 opacity-5 pointer-events-none">
-        <div className="absolute inset-0 bg-[repeating-linear-gradient(90deg,transparent,transparent_49px,#a3e635_49px,#a3e635_50px)]" />
-        <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_49px,#a3e635_49px,#a3e635_50px)]" />
-      </div>
-
-      <div className="max-w-360 mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.6 }}
-          className="mb-20"
-        >
+      <div className="max-w-360 mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="about-title mb-20 text-center md:text-left" style={{ opacity: 0 }}>
           <div className="inline-flex items-center gap-2 px-4 py-2 border border-lime-400/30 rounded-full bg-lime-400/5 mb-6">
             <Cpu className="text-lime-400" size={16} />
-            <span className="text-lime-400 text-sm uppercase tracking-widest font-medium">System Profile</span>
+            <span className="text-lime-400 text-sm uppercase tracking-widest font-medium">Identity Module</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight">
-            ENGINEERING <span className="text-transparent bg-clip-text bg-gradient-to-r from-lime-400 to-fuchsia-500">EXCELLENCE</span>
+          <h2 className="text-5xl md:text-7xl font-black text-white tracking-tight">
+            DECODING THE <br />
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-lime-400 to-fuchsia-500">ENGINEER</span>
           </h2>
-        </motion.div>
+        </div>
 
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          {/* Left Column: 3D Image Card */}
-          <motion.div
-            style={{
-              rotateX,
-              rotateY,
-              transformStyle: "preserve-3d",
-            }}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-            className="relative perspective-[1000px] group"
-          >
-            <div
-              className="relative rounded-2xl p-2 bg-linear-to-br from-lime-400/20 via-black to-fuchsia-500/20 border border-white/10 backdrop-blur-sm transform-gpu transition-all duration-300 group-hover:shadow-[0_0_30px_rgba(163,230,53,0.15)]"
-              style={{ transform: "translateZ(20px)" }}
-            >
-              <div className="relative rounded-xl overflow-hidden aspect-4/5 lg:aspect-square bg-[radial-gradient(circle_at_center,var(--tw-gradient-stops))] from-fuchsia-500/10 via-zinc-900 to-black">
-                <ImageWithFallback
-                  src="/emon-profile.png"
-                  alt="Developer Profile"
-                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
+        <div className="grid lg:grid-cols-12 gap-16 items-start">
+          {/* Left Column: Profile Context */}
+          <div className="lg:col-span-5 space-y-12">
+            <div className="about-image-card relative group" style={{ opacity: 0 }}>
+              <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-zinc-900 shadow-2xl aspect-4/5 sm:aspect-square">
+                <img
+                  src="/emon.jpeg"
+                  alt="Yeasin Emon"
+                  className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100"
                 />
+                <div className="absolute inset-0 bg-linear-to-t from-black via-transparent to-transparent opacity-60" />
 
-                {/* HUD Overlay */}
-                <div className="absolute inset-0 pointer-events-none border-[10px] border-black/0 group-hover:border-black/0 transition-all duration-500">
-                  <div className="absolute top-4 right-4 flex flex-col gap-2 items-end">
-                    <div className="bg-black/80 backdrop-blur text-lime-400 text-xs font-mono px-2 py-1 border border-lime-400/30">
-                      STATUS: ONLINE
-                    </div>
-                    <div className="bg-black/80 backdrop-blur text-fuchsia-500 text-xs font-mono px-2 py-1 border border-fuchsia-500/30">
-                      LOC: EARTH-616
-                    </div>
+                {/* Floating Meta Data */}
+                <div className="absolute bottom-6 left-6 right-6 flex justify-between items-end">
+                  <div className="space-y-1">
+                    <p className="text-xs font-mono text-lime-400 uppercase tracking-widest">EST. 2021</p>
+                    <p className="text-xl font-bold text-white uppercase">Yeasin Emon</p>
                   </div>
-
-                  {/* Decorative corners */}
-                  <div className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-lime-400 opacity-50" />
-                  <div className="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 border-fuchsia-500 opacity-50" />
+                  <div className="bg-white/5 backdrop-blur-md p-2 border border-white/10 rounded-lg">
+                    <MapPin className="text-fuchsia-500" size={18} />
+                  </div>
                 </div>
               </div>
+
+              {/* Decorative corners */}
+              <div className="absolute -top-4 -left-4 w-12 h-12 border-t-2 border-l-2 border-lime-400/50" />
+              <div className="absolute -bottom-4 -right-4 w-12 h-12 border-b-2 border-r-2 border-fuchsia-400/50" />
             </div>
 
-            {/* Background Glow */}
-            <div className="absolute -inset-10 bg-gradient-to-tr from-lime-400/10 to-fuchsia-500/10 blur-3xl -z-10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-          </motion.div>
-
-          {/* Right Column: Content */}
-          <div className="space-y-10">
-            <div className="space-y-6 text-lg text-gray-300 leading-relaxed">
-              <motion.p
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-              >
-                <span className="text-lime-400 font-mono text-xl mr-2">&gt;</span>
-                I'm a Fullstack Developer with a passion for building robust, scalable solutions.
-                My approach combines clean code architecture with immersive user experiences.
-              </motion.p>
-              <motion.p
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-              >
-                <span className="text-fuchsia-500 font-mono text-xl mr-2">&gt;</span>
-                Specializing in the React ecosystem and cloud-native technologies, I help startups
-                and enterprises turn complex requirements into elegant, production-ready applications.
-              </motion.p>
-            </div>
-
-            <div className="grid sm:grid-cols-2 gap-4">
-              {highlights.map((item, index) => (
-                <FeatureCard key={item.title} {...item} delay={0.2 + index * 0.1} />
+            <div className="about-pillars grid grid-cols-2 gap-6">
+              {[
+                { label: 'Professional Exp.', val: '2.3 Years', icon: Calendar },
+                { label: 'Programming Journey', val: '5+ Years', icon: Sparkles },
+                { label: 'Project Deployments', val: '50+', icon: Rocket },
+                { label: 'Technical Accuracy', val: '99%', icon: Sparkles },
+              ].map((p, i) => (
+                <motion.div
+                  key={i}
+                  whileHover={{ y: -5, scale: 1.05 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+                  className="about-pillar group p-4 rounded-xl border border-white/5 bg-white/2 hover:bg-white/5 hover:border-lime-400/30 transition-all duration-300 pointer-events-auto"
+                  style={{ opacity: 0 }}
+                >
+                  <p className="text-xs font-mono text-zinc-500 uppercase tracking-widest mb-1">{p.label}</p>
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl font-black text-white">{p.val}</span>
+                    <p.icon className="text-lime-400 opacity-0 group-hover:opacity-100 transition-opacity" size={14} />
+                  </div>
+                </motion.div>
               ))}
             </div>
+          </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.6 }}
-              className="flex gap-8 pt-8 border-t border-white/10"
-            >
-              <div>
-                <div className="text-3xl font-black text-white mb-1">5+</div>
-                <div className="text-xs font-mono text-gray-500 uppercase tracking-widest">Years Exp.</div>
+          {/* Right Column: Narrative & Interests */}
+          <div className="lg:col-span-7 space-y-16">
+            <div className="space-y-8">
+              <h3 className="about-intro-text text-2xl md:text-3xl font-bold text-white leading-tight" style={{ opacity: 0 }}>
+                Full Stack Developer focused on building <span className="text-lime-400">scalable web applications</span> and evolving into a software engineer with strong system design and architecture skills.
+              </h3>
+              <div className="space-y-6 text-lg text-zinc-400 leading-relaxed">
+                <p className="about-intro-text" style={{ opacity: 0 }}>
+                  Started my journey in 2021 at Programming Hero, now working with modern technologies while exploring distributed systems and AI-driven solutions. I enjoy the complexity of building end-to-end systems that don't just work, but excel under load.
+                </p>
+                <p className="about-intro-text" style={{ opacity: 0 }}>
+                  My development philosophy is centered around <span className="text-white font-semibold italic">Efficiency, Scalability, and Clean Architecture.</span> I believe great software is a blend of precision engineering and intuitive human-centric design.
+                </p>
               </div>
-              <div>
-                <div className="text-3xl font-black text-white mb-1">50+</div>
-                <div className="text-xs font-mono text-gray-500 uppercase tracking-widest">Projects</div>
+            </div>
+
+            <div className="space-y-8">
+              <div className="flex items-center gap-4">
+                <h4 className="text-xl font-black text-white uppercase tracking-widest">Lifestyle & Pillars</h4>
+                <div className="h-px flex-1 bg-linear-to-r from-white/10 to-transparent" />
               </div>
-              <div>
-                <div className="text-3xl font-black text-white mb-1">100%</div>
-                <div className="text-xs font-mono text-gray-500 uppercase tracking-widest">Commitment</div>
+
+              <div className="interests-grid grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-6">
+                {interests.map((item, i) => (
+                  <div key={i} className="interest-card-item" style={{ opacity: 0 }}>
+                    <InterestCard {...item} />
+                  </div>
+                ))}
               </div>
-            </motion.div>
+            </div>
+
+            <div className="p-8 rounded-2xl bg-linear-to-br from-lime-400/10 via-zinc-900 to-fuchsia-500/10 border border-white/5 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-4 opacity-10">
+                <Sparkles size={80} className="text-white" />
+              </div>
+              <h4 className="text-lg font-bold text-white mb-2 relative z-10">Current Objective</h4>
+              <p className="text-zinc-400 relative z-10">
+                Researching <span className="text-lime-400">Distributed Microservices</span> and refining <span className="text-fuchsia-500">Autonomous AI Agents</span> to push the boundaries of what modern web stacks can achieve.
+              </p>
+            </div>
           </div>
         </div>
       </div>

@@ -64,7 +64,7 @@ export function Footer() {
                             Data Channels
                         </h4>
                         <ul className="space-y-3">
-                            {['Home', 'About', 'Skills', 'Projects', 'Contact'].map((item) => (
+                            {['Home', 'About', 'Skills', 'Education', 'Projects', 'Contact'].map((item) => (
                                 <li key={item}>
                                     <a
                                         href={`#${item.toLowerCase()}`}
@@ -89,7 +89,7 @@ export function Footer() {
                                 <MapPin size={18} className="text-fuchsia-500 mt-0.5 shrink-0" />
                                 <div className="text-sm">
                                     <p className="text-white font-bold mb-1 uppercase tracking-tight">Main Sector</p>
-                                    <p className="text-zinc-500 font-mono text-xs">Neo Tokyo, Grid 7 / Earth-1</p>
+                                    <p className="text-zinc-500 font-mono text-xs">Dhaka, Bangladesh</p>
                                 </div>
                             </div>
                             <div className="flex items-start gap-3">

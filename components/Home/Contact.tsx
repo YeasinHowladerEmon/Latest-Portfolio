@@ -186,13 +186,13 @@ export function Contact() {
                             </h3>
 
                             <div className="space-y-6">
-                                <a href="mailto:hello@cyber.dev" className="flex items-center gap-4 group/item">
+                                <a href="mailto:emonibnsalim@gmail.com" className="flex items-center gap-4 group/item">
                                     <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center border border-white/10 group-hover/item:border-lime-400 group-hover/item:text-lime-400 transition-all duration-300">
                                         <Mail size={24} />
                                     </div>
                                     <div>
                                         <div className="text-xs text-gray-500 uppercase tracking-widest mb-1">Email Protocol</div>
-                                        <div className="text-white font-mono text-lg group-hover/item:text-lime-400 transition-colors">hello@cyber.dev</div>
+                                        <div className="text-white font-mono text-lg group-hover/item:text-lime-400 transition-colors">emonibnsalim@gmail.com</div>
                                     </div>
                                 </a>
 
@@ -202,7 +202,7 @@ export function Contact() {
                                     </div>
                                     <div>
                                         <div className="text-xs text-gray-500 uppercase tracking-widest mb-1">Base of Operations</div>
-                                        <div className="text-white font-mono text-lg group-hover/item:text-fuchsia-500 transition-colors">Neo Tokyo, Grid 7</div>
+                                        <div className="text-white font-mono text-lg group-hover/item:text-fuchsia-500 transition-colors">Dhaka, Bangladesh</div>
                                     </div>
                                 </div>
 
@@ -271,7 +271,7 @@ export function Contact() {
                                         name="name"
                                         value={formData.name}
                                         onChange={handleChange}
-                                        placeholder="John Doe"
+                                        placeholder="Your Name"
                                         required
                                     />
 
@@ -281,19 +281,19 @@ export function Contact() {
                                         name="email"
                                         value={formData.email}
                                         onChange={handleChange}
-                                        placeholder="john@example.com"
+                                        placeholder="Your Email"
                                         required
                                     />
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <InputField
-                                        label="PHONE NUMBER"
-                                        type="tel"
+                                        label="LOCATION"
+                                        type="text"
                                         name="phone"
                                         value={formData.phone}
                                         onChange={handleChange}
-                                        placeholder="+1 234 567 890"
+                                        placeholder="Your Address"
                                     />
 
                                     <InputField
@@ -302,7 +302,7 @@ export function Contact() {
                                         name="subject"
                                         value={formData.subject}
                                         onChange={handleChange}
-                                        placeholder="Project Inquiry"
+                                        placeholder="What is this about?"
                                         required
                                     />
                                 </div>
@@ -313,7 +313,7 @@ export function Contact() {
                                     name="message"
                                     value={formData.message}
                                     onChange={handleChange}
-                                    placeholder="Enter your message here..."
+                                    placeholder="Your message here..."
                                     required
                                 />
                             </div>
