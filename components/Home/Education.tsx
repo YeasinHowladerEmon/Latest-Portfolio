@@ -15,12 +15,12 @@ const EducationItem = ({ degree, institution, year, result, details, icon: Icon,
         >
             <div className="absolute inset-0 bg-white/5 border border-white/10 rounded-2xl group-hover:border-white/20 transition-all duration-300 backdrop-blur-sm" />
             <div className={`absolute top-0 left-0 w-1 h-full rounded-l-2xl bg-${accent}-400 opacity-50 group-hover:opacity-100 transition-opacity`} />
-            
+
             <div className="relative p-6 flex flex-col md:flex-row gap-6 items-start">
                 <div className={`w-14 h-14 rounded-xl bg-black/40 border border-white/10 flex items-center justify-center text-${accent}-400 shrink-0 shadow-[0_0_20px_-5px_rgba(163,230,53,0.3)] group-hover:scale-110 transition-transform`}>
                     <Icon size={28} />
                 </div>
-                
+
                 <div className="space-y-2 flex-1">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
                         <h3 className="text-xl font-bold text-white tracking-tight">{degree}</h3>
@@ -29,10 +29,10 @@ const EducationItem = ({ degree, institution, year, result, details, icon: Icon,
                             {year}
                         </div>
                     </div>
-                    
+
                     <p className={`text-${accent}-400 font-medium tracking-wide uppercase text-xs`}>{institution}</p>
                     <p className="text-zinc-400 text-sm leading-relaxed max-w-2xl">{details}</p>
-                    
+
                     {result && (
                         <div className="flex items-center gap-2 mt-4 text-xs font-mono">
                             <span className="text-zinc-500 uppercase">Status:</span>
@@ -58,13 +58,13 @@ export function Education() {
             institution: "Dhaka, Bangladesh",
             year: "2022",
             result: "Successfully Completed",
-            details: "Specialized in Science department with a strong foundation in Mathematics and Physics, maintaining consistent academic excellence throughout the curriculum.",
+            details: "Completed Higher Secondary Certificate in Humanities background, developing strong analytical and communication skills while building a versatile academic foundation.",
             icon: GraduationCap,
             accent: "fuchsia",
             delay: 0.1
         },
         {
-            degree: "Full Stack Web Development (Black Belt)",
+            degree: "Complete Web Development (Black Belt)",
             institution: "Programming Hero",
             year: "2021 - 2022",
             result: "Black Belt Achiever",
@@ -78,7 +78,7 @@ export function Education() {
             institution: "Dhaka, Bangladesh",
             year: "2020",
             result: "Successfully Completed",
-            details: "Focused on core science subjects and technology, building the primary technical and analytical skills required for advanced engineering studies.",
+            details: "Completed Secondary School Certificate in Commerce background, gaining foundational knowledge in business studies, accounting, and financial management.",
             icon: BookOpen,
             accent: "cyan",
             delay: 0.3
