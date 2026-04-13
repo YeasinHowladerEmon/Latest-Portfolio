@@ -21,6 +21,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://emon-portfolio.vercel.app'),
   title: 'Emon | Full-Stack Software Engineer',
   description: 'Portfolio of Emon, a Full-Stack Engineer crafting scalable, modern, and reliable web applications.',
   keywords: ['Emon', 'Full-Stack Engineer', 'Software Developer', 'Web Development', 'React', 'Next.js', 'Node.js', 'Portfolio'],
