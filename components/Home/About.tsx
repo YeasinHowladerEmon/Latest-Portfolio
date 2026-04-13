@@ -176,7 +176,7 @@ export function About() {
                 <div className="absolute bottom-6 left-6 right-6 flex justify-between items-end">
                   <div className="space-y-1">
                     <p className="text-xs font-mono text-lime-400 uppercase tracking-widest">EST. 2021</p>
-                    <p className="text-xl font-bold text-white uppercase">Yeasin Emon</p>
+                    <p className="text-xl font-bold text-white uppercase">Yeasin Howlader Emon</p>
                   </div>
                   <div className="bg-white/5 backdrop-blur-md p-2 border border-white/10 rounded-lg">
                     <MapPin className="text-fuchsia-500" size={18} />
@@ -221,7 +221,7 @@ export function About() {
               </h3>
               <div className="space-y-6 text-lg text-zinc-400 leading-relaxed">
                 <p className="about-intro-text" style={{ opacity: 0 }}>
-                  Started my journey in 2021 at Programming Hero, now working with modern technologies while exploring distributed systems and AI-driven solutions. I enjoy the complexity of building end-to-end systems that don't just work, but excel under load.
+                  I am Yeasin Howlader Emon and I started my journey in 2021 at Programming Hero, now working with modern technologies while exploring distributed systems and AI-driven solutions. I enjoy the complexity of building end-to-end systems that don't just work, but excel under load.
                 </p>
                 <p className="about-intro-text" style={{ opacity: 0 }}>
                   My development philosophy is centered around <span className="text-white font-semibold italic">Efficiency, Scalability, and Clean Architecture.</span> I believe great software is a blend of precision engineering and intuitive human-centric design.
