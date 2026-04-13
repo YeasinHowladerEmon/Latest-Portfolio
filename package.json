@@ -76,7 +76,7 @@
     "zod": "^4.2.1"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/postcss": "^4.2.2",
     "@types/bcrypt": "^6.0.0",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
@@ -87,9 +87,9 @@
     "dotenv": "^17.3.1",
     "eslint": "^10.0.0",
     "eslint-config-next": "^0.2.4",
-    "postcss": "^8.5.6",
+    "postcss": "^8.5.9",
     "shadcn-ui": "^0.9.5",
-    "tailwindcss": "^4.1.18",
+    "tailwindcss": "^4.2.2",
     "typescript": "^5"
   }
 }
