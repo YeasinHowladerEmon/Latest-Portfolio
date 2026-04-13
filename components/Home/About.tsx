@@ -166,7 +166,7 @@ export function About() {
             <div className="about-image-card relative group" style={{ opacity: 0 }}>
               <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-zinc-900 shadow-2xl aspect-4/5 sm:aspect-square">
                 <img
-                  src="/emon.jpeg"
+                  src="/emon_cartoon.png"
                   alt="Yeasin Emon"
                   className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100"
                 />
